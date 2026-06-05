@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		03FCA2632FD36578002E38D0 /* InMemoryLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 03FCA2622FD36578002E38D0 /* InMemoryLogging */; };
+		03FCA2652FD36578002E38D0 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = 03FCA2642FD36578002E38D0 /* Logging */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		031A17302FC8AF5700D218F7 /* ImageFeed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageFeed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +41,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				03FCA2652FD36578002E38D0 /* Logging in Frameworks */,
+				03FCA2632FD36578002E38D0 /* InMemoryLogging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +85,8 @@
 			);
 			name = ImageFeed;
 			packageProductDependencies = (
+				03FCA2622FD36578002E38D0 /* InMemoryLogging */,
+				03FCA2642FD36578002E38D0 /* Logging */,
 			);
 			productName = ImageFeed;
 			productReference = 031A17302FC8AF5700D218F7 /* ImageFeed.app */;
@@ -107,6 +116,9 @@
 			);
 			mainGroup = 031A17272FC8AF5700D218F7;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				03FCA2612FD36578002E38D0 /* XCRemoteSwiftPackageReference "swift-log" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 031A17312FC8AF5700D218F7 /* Products */;
 			projectDirPath = "";
@@ -153,7 +165,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -188,7 +200,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -351,6 +363,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		03FCA2612FD36578002E38D0 /* XCRemoteSwiftPackageReference "swift-log" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-log.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.13.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		03FCA2622FD36578002E38D0 /* InMemoryLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 03FCA2612FD36578002E38D0 /* XCRemoteSwiftPackageReference "swift-log" */;
+			productName = InMemoryLogging;
+		};
+		03FCA2642FD36578002E38D0 /* Logging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 03FCA2612FD36578002E38D0 /* XCRemoteSwiftPackageReference "swift-log" */;
+			productName = Logging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 031A17282FC8AF5700D218F7 /* Project object */;
 }
