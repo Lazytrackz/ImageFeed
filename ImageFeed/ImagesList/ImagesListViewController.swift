@@ -100,7 +100,6 @@ extension ImagesListViewController: UITableViewDataSource{
             logger.warning("Failed to load cell")
             return UITableViewCell()
         }
-        
         configCell(for: imageListCell, with: indexPath)
         return imageListCell
     }
