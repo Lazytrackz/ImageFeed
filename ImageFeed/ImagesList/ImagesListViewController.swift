@@ -20,6 +20,7 @@ final class ImagesListViewController: UIViewController {
     
     private let logger = Logger(label: "ImageFeed.ImagesListViewController.")
     private let photosName: [String] = Array(0..<20).map{ "\($0)" }
+    private let today = Date()
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ru_RU")
@@ -38,7 +39,6 @@ final class ImagesListViewController: UIViewController {
     // MARK: - Private methods
     
     private func tableViewConfig() {
-        tableView.rowHeight = 200
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
     }
 }
@@ -54,14 +54,8 @@ extension ImagesListViewController {
             return
         }
         cell.cellImage?.image = image
-        cell.dateLabel?.text = dateFormatter.string(from: Date())
-        
-        if indexPath.row % 2 == 0 {
-            cell.likeButton?.setImage(UIImage(named: "Active"), for: .normal)
-        }
-        else {
-            cell.likeButton?.setImage(UIImage(named: "No_active"), for: .normal)
-        }
+        cell.dateLabel?.text = dateFormatter.string(from: today)
+        cell.likeButton?.setImage(UIImage(resource: indexPath.row % 2 == 0 ? .active : .noActive), for: .normal)
     }
 }
 
@@ -90,7 +84,7 @@ extension ImagesListViewController: UITableViewDataSource{
     // MARK: - Methods
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return photosName.count
+        photosName.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

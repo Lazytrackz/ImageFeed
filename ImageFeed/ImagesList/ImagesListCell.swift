@@ -5,7 +5,6 @@
 //  Created by Aleksey Kosichenko on 31.05.2026.
 //
 
-import Foundation
 import UIKit
 
 //MARK: - ImagesListCell
