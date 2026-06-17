@@ -15,10 +15,11 @@ final class ImagesListCell: UITableViewCell {
     
     @IBOutlet weak var cellImage: UIImageView!
     @IBOutlet weak var likeButton: UIButton!
-    @IBOutlet weak var dateLabel: UILabel!
-    //TODO: добавить UIView с градиентом
+    @IBOutlet weak var dateLabel: UILabel!    
+    @IBOutlet weak var gradientImage: UIImageView!
     
     // MARK: - Properties
     
     static let reuseIdentifier = "ImagesListCell"
+    
 }
