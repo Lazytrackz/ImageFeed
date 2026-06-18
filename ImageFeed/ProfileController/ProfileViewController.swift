@@ -40,7 +40,6 @@ final class ProfileViewController: UIViewController {
     
     @objc private func didTapLogoutButton() {}
     
-    
     // MARK: - Private methods
     
     private func makeProfileImageView() {
@@ -81,7 +80,7 @@ final class ProfileViewController: UIViewController {
             target: self,
             action: #selector(self.didTapLogoutButton)
         )
-        logOutButton.tintColor = .red
+        logOutButton.tintColor = UIColor(named: "YP Red (iOS)")
         logOutButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(logOutButton)
     }

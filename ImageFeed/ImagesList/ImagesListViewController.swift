@@ -21,15 +21,6 @@ final class ImagesListViewController: UIViewController {
     private let showSingleImageSegueIdentifier = "ShowSingleImage"
     private let logger = Logger(label: "ImageFeed.ImagesListViewController.")
     private let photosName: [String] = Array(0..<20).map{ "\($0)" }
-    private let gradientImage = UIImage(named: "Rectangle")
-    private let today = Date()
-    private lazy var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ru_RU")
-        formatter.dateStyle = .long
-        formatter.timeStyle = .none
-        return formatter
-    }()
     
     // MARK: - Lifecycle
     
@@ -52,11 +43,12 @@ final class ImagesListViewController: UIViewController {
                 let viewController = segue.destination as? SingleImageViewController,
                 let indexPath = sender as? IndexPath
             else {
-                assertionFailure("Invalid segue destination")
+                print("Invalid segue destination")
                 return
             }
             let image = UIImage(named: photosName[indexPath.row])
-            viewController.image = image 
+            guard let image else {return}
+            viewController.setImage(newImage: image)
         } else {
             super.prepare(for: segue, sender: sender)
         }
@@ -73,10 +65,9 @@ extension ImagesListViewController {
         guard let image = UIImage(named: photosName[indexPath.row]) else {
             return
         }
-        cell.gradientImage?.image = gradientImage
-        cell.cellImage?.image = image
-        cell.dateLabel?.text = dateFormatter.string(from: today)
-        cell.likeButton?.setImage(UIImage(resource: indexPath.row % 2 == 0 ? .active : .noActive), for: .normal)
+        cell.setCellImage(newImage: image)
+        cell.setRow(currentRow: indexPath.row)
+        cell.configCell()
     }
 }
 

@@ -14,25 +14,20 @@ final class SingleImageViewController: UIViewController {
     
     // MARK: - IBOutlets
     
-    @IBOutlet weak var sharingButton: UIButton!
+    @IBOutlet weak private var sharingButton: UIButton!
     @IBOutlet private var imageView: UIImageView!
     @IBOutlet private var scrollView: UIScrollView!
     
     // MARK: - Properties
     
-    var image: UIImage?
+    private var image: UIImage? 
     
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        scrollView.minimumZoomScale = 0.1
-        scrollView.maximumZoomScale = 1.25
-        scrollView.isScrollEnabled = false
-        guard let image else { return }
-        imageView.image = image
-        imageView.frame.size = image.size
-        rescaleAndCenterImageInScrollView(image: image)
+        configScrollView()
+        configImageView()
     }
     
     // MARK: - Actions
@@ -56,15 +51,38 @@ final class SingleImageViewController: UIViewController {
         view.layoutIfNeeded()
         let visibleRectSize = scrollView.bounds.size
         let imageSize = image.size
-        let hScale = visibleRectSize.width / imageSize.width
-        let vScale = visibleRectSize.height / imageSize.height
-        let scale = min(maxZoomScale, max(minZoomScale, min(hScale, vScale)))
-        scrollView.setZoomScale(scale, animated: false)
-        scrollView.layoutIfNeeded()
+        if imageSize.width > 0 && imageSize.height > 0 {
+            let hScale = visibleRectSize.width / imageSize.width
+            let vScale = visibleRectSize.height / imageSize.height
+            let scale = min(maxZoomScale, max(minZoomScale, min(hScale, vScale)))
+            scrollView.setZoomScale(scale, animated: false)
+            scrollView.layoutIfNeeded()
+        } else {
+            print("Incorrect image size")
+        }
         let newContentSize = scrollView.contentSize
         let x = (newContentSize.width - visibleRectSize.width) / 2
         let y = (newContentSize.height - visibleRectSize.height) / 2
         scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
+    }
+    
+    private func configImageView() {
+        guard let image else { return }
+        imageView.image = image
+        imageView.frame.size = image.size
+        rescaleAndCenterImageInScrollView(image: image)
+    }
+    
+    private func configScrollView() {
+        scrollView.minimumZoomScale = 0.1
+        scrollView.maximumZoomScale = 1.25
+        scrollView.isScrollEnabled = false
+    }
+    
+    // MARK: - Methods
+    
+    func setImage(newImage: UIImage) {
+        image = newImage
     }
 }
 
