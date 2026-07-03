@@ -19,24 +19,25 @@ struct NetworkClient: NetworkRouting {
     
     // MARK: - Methods
     
-    func fetch(request: URLRequest?, handler: @escaping (Result<Data, Error>) -> Void) {
+    func fetch(request: URLRequest?, completion: @escaping (Result<Data, Error>) -> Void) {
         guard let request = request else { return }
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error {
-                handler(.failure(error))
-                print(error)
-                return
-            }
-            if let response = response as? HTTPURLResponse,
-               response.statusCode < 200 || response.statusCode >= 300 {
-                handler(.failure(NetworkError.codeError))
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                if let error {
+                    completion(.failure(error))
+                    print(error)
+                    return
+                }
+                if let response = response as? HTTPURLResponse,
+                   response.statusCode < 200 || response.statusCode >= 300 {
+                    completion(.failure(NetworkError.codeError))
+                    guard let data = data else { return }
+                    print(String(data: data, encoding: .utf8) ?? data)
+                    return
+                }
                 guard let data = data else { return }
-                print(String(data: data, encoding: .utf8) ?? data)
-                return
+                completion(.success(data))
             }
-            guard let data = data else { return }
-            handler(.success(data))
-        }
-        task.resume()
+            task.resume()
+       
     }
 }

@@ -13,6 +13,6 @@ protocol NetworkRouting {
     
     // MARK: - methods
     
-    func fetch(request: URLRequest?, handler: @escaping (Result<Data, Error>) -> Void)
+    func fetch(request: URLRequest?, completion: @escaping (Result<Data, Error>) -> Void)
 }
 

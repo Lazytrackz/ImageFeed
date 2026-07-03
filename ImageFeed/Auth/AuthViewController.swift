@@ -14,8 +14,10 @@ final class AuthViewController: UIViewController {
     // MARK: - private properties
     
     private let segueIdentifier = "ShowWebView"
-    private var tokenStorage: OAuth2TokenStorage?
+   // private var tokenStorage: OAuth2TokenStorage?
     private var webView: WebViewViewController?
+    //private let oauth2Service = OAuth2Service.shared
+    //private var oauth2Service2: OAuth2Service?
     
     // MARK: - properties
     
@@ -26,6 +28,10 @@ final class AuthViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureBackButton()
+        
+        //UserDefaults.standard.removeObject(forKey: "access_token")
+        //print("del")
+
     }
     
     // MARK: - private methods
@@ -61,7 +67,7 @@ extension AuthViewController:  WebViewViewControllerDelegate {
     // MARK: - methods
     
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        OAuth2Service.shared.fetchOAuthToken(code: code) { [weak self] result in
+        /*OAuth2Service.shared.fetchOAuthToken(code: code) { [weak self] result in
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 switch result {
@@ -78,9 +84,28 @@ extension AuthViewController:  WebViewViewControllerDelegate {
                     print("Unable to get access token ")
                 }
             }
+        }*/
+        
+        OAuth2Service.shared.fetchOAuthToken(code) { [weak self] result in
+            guard let self = self else {
+                return }
+            
+            switch result {
+            case .success:
+                self.delegate?.didAuthenticate(self)
+            case .failure:
+                print("error")
+                break
+            }
         }
+        
     }
+  
+        
+        
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
         vc.dismiss(animated: true, completion: nil)
     }
 }
+
+
