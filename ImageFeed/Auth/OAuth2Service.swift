@@ -17,7 +17,6 @@ final class OAuth2Service {
     
     // MARK: - private properties
     
-    private let networkClient = NetworkClient()
     private var tokenStorage: OAuth2TokenStorage?
     private let jsonDecoder = JSONDecoder()
     private init() {}
@@ -43,79 +42,34 @@ final class OAuth2Service {
         var request = URLRequest(url: token)
         request.httpMethod = "POST"
         return request
-    
     }
     
     // MARK: - methods
     
-    /*func fetchOAuthToken (code: String, completion: @escaping (Result<String, Error>) -> Void) {
-        networkClient.fetch(request: makeTokenRequest(code: code), completion: {result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let data):
-                    do {
-                        let token = try self.jsonDecoder.decode(AccessToken.self, from: data)
-                        completion(.success(token.access_token))
-                        if !token.access_token.isEmpty {
-                            self.tokenStorage = OAuth2TokenStorage()
-                            self.tokenStorage?.token = token.access_token
-                            print(self.tokenStorage?.token as Any)
-                        }
-                    } catch {
-                        completion(.failure(error))
-                        print(error)
+    func fetchOAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) {
+        guard let request = makeTokenRequest(code: code) else { return }
+        let task = URLSession.shared.data(for: request, completion: { result in
+            switch result {
+            case .success(let data):
+                do {
+                    let token = try self.jsonDecoder.decode(AccessToken.self, from: data)
+                    completion(.success(token.access_token))
+                    if !token.access_token.isEmpty {
+                        self.tokenStorage = OAuth2TokenStorage()
+                        self.tokenStorage?.token = token.access_token
+                    }else {
+                        print("token is empty")
                     }
-                case .failure(let error):
+                    
+                } catch {
                     completion(.failure(error))
                     print(error)
                 }
+            case .failure(let error):
+                completion(.failure(error))
+                print(error)
             }
         })
-        
-        
-        
-        
-    }*/
-    
-    
-    
-    func fetchOAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) {
-        
-        guard let request = makeTokenRequest(code: code) else { return }
-        let task = URLSession.shared.data(for: request, completion: { result in
-        
-        switch result {
-        case .success(let data):
-        do {
-            let token = try self.jsonDecoder.decode(AccessToken.self, from: data)
-            completion(.success(token.access_token))
-            self.tokenStorage = OAuth2TokenStorage()
-            self.tokenStorage?.token = token.access_token
-            print(self.tokenStorage?.token as Any)
-           
-            
-            
-            
-        } catch {
-        completion(.failure(error))
-        print(error)
-        }
-        case .failure(let error):
-        completion(.failure(error))
-        print(error)
-        }
-        })
-        
         task.resume()
-       
-       
     }
-     
-    
-    
-    
 }
-
-    
-    
-

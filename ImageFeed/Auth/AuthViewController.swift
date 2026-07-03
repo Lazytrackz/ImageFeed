@@ -14,10 +14,7 @@ final class AuthViewController: UIViewController {
     // MARK: - private properties
     
     private let segueIdentifier = "ShowWebView"
-   // private var tokenStorage: OAuth2TokenStorage?
     private var webView: WebViewViewController?
-    //private let oauth2Service = OAuth2Service.shared
-    //private var oauth2Service2: OAuth2Service?
     
     // MARK: - properties
     
@@ -28,10 +25,6 @@ final class AuthViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureBackButton()
-        
-        //UserDefaults.standard.removeObject(forKey: "access_token")
-        //print("del")
-
     }
     
     // MARK: - private methods
@@ -62,50 +55,24 @@ final class AuthViewController: UIViewController {
 
 // MARK: - extension
 
-extension AuthViewController:  WebViewViewControllerDelegate {
+extension AuthViewController: WebViewViewControllerDelegate {
     
     // MARK: - methods
     
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        /*OAuth2Service.shared.fetchOAuthToken(code: code) { [weak self] result in
-            DispatchQueue.main.async {
-                guard let self = self else { return }
-                switch result {
-                case .success(let accessToken):
-                    if !accessToken.access_token.isEmpty {
-                        self.tokenStorage = OAuth2TokenStorage()
-                        self.tokenStorage?.token = accessToken.access_token
-                        self.delegate?.didAuthenticate(self)
-                    }
-                case .failure:
-                    self.webView = WebViewViewController()
-                    guard let webView = self.webView else { return }
-                    self.webViewViewControllerDidCancel(webView)
-                    print("Unable to get access token ")
-                }
-            }
-        }*/
-        
         OAuth2Service.shared.fetchOAuthToken(code) { [weak self] result in
             guard let self = self else {
                 return }
-            
             switch result {
             case .success:
                 self.delegate?.didAuthenticate(self)
             case .failure:
-                print("error")
+                print("Error fetching token")
                 break
             }
         }
-        
     }
-  
-        
-        
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
         vc.dismiss(animated: true, completion: nil)
     }
 }
-
-
