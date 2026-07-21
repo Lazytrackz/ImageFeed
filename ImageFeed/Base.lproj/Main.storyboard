@@ -125,10 +125,10 @@
             </objects>
             <point key="canvasLocation" x="-2871" y="-47"/>
         </scene>
-        <!--AuthViewController-->
+        <!--Auth View Controller-->
         <scene sceneID="9uK-fZ-zvv">
             <objects>
-                <viewController storyboardIdentifier="AuthViewController" title="AuthViewController" id="12H-Lw-KCr" customClass="AuthViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AuthViewController" id="12H-Lw-KCr" customClass="AuthViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="CEA-gF-8v0">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -175,7 +175,6 @@
                             <constraint firstItem="WXv-Mm-BhV" firstAttribute="centerX" secondItem="CEA-gF-8v0" secondAttribute="centerX" id="k49-ij-Y0U"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="X8b-my-h5p"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="V8m-Kd-gcO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -186,7 +185,7 @@
             <objects>
                 <viewController id="vmm-EY-Ekg" customClass="WebViewViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="t9G-X9-GtX">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="793"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <wkWebView contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eSV-AT-YQN">
@@ -214,7 +213,6 @@
                             <constraint firstAttribute="bottom" secondItem="eSV-AT-YQN" secondAttribute="bottom" id="jwo-8G-ayA"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="rcu-F6-Wir"/>
                     <connections>
                         <outlet property="progressView" destination="wqY-cl-Rup" id="CDC-HX-5WT"/>
                         <outlet property="webView" destination="eSV-AT-YQN" id="1Go-Qn-3Bb"/>
@@ -321,16 +319,13 @@
         <!--Navigation Controller-->
         <scene sceneID="sGJ-GC-T71">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="QPo-dy-aDr" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="NavigationController" automaticallyAdjustsScrollViewInsets="NO" id="QPo-dy-aDr" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="akB-Ac-ltF">
                         <rect key="frame" x="0.0" y="118" width="393" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="12H-Lw-KCr" kind="relationship" relationship="rootViewController" id="hbM-WR-kIP"/>
-                    </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Yax-7a-8dV" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

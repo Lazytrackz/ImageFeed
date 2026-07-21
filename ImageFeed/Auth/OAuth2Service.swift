@@ -66,7 +66,7 @@ final class OAuth2Service {
             completion(.failure(AuthServiceError.invalidRequest))
             return
         }
-        let task = URLSession.shared.objectTask(for: request, completion: {(result: Result<AccessToken, Error>) in
+        let task = URLSession.shared.objectTask(for: request, completion: {(result: Result<OAuthTokenResponseBody, Error>) in
             switch result {
             case .success(let data):
                 completion(.success(data.accessToken))

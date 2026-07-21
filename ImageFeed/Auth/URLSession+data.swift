@@ -17,6 +17,11 @@ enum NetworkError: Error {
     case decodingError(Error)
 }
 
+enum StatusCode {
+    static let statusCodeLess = 200
+    static let statusCodeGreater = 300
+}
+
 // MARK: - extension
 
 extension URLSession {
@@ -31,7 +36,7 @@ extension URLSession {
         }
         let task = dataTask(with: request, completionHandler: { data, response, error in
             if let data = data, let response = response, let statusCode = (response as? HTTPURLResponse)?.statusCode {
-                if 200 ..< 300 ~= statusCode {
+                if StatusCode.statusCodeLess ..< StatusCode.statusCodeGreater ~= statusCode {
                     fulfillCompletionOnTheMainThread(.success(data))
                 } else {
                     fulfillCompletionOnTheMainThread(.failure(NetworkError.httpStatusCode(statusCode)))

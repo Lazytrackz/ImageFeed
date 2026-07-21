@@ -48,7 +48,6 @@ final class ProfileImageService {
             completion(.failure(ProfileServiceError.invalidRequest))
             return
         }
-        
         let task = URLSession.shared.objectTask(for: request, completion: {(result: Result<UserResult, Error>) in
             switch result {
             case .success(let data):

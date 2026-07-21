@@ -7,9 +7,9 @@
 
 import Foundation
 
-//MARK: - AccessToken
+//MARK: - OAuthTokenResponseBody
 
-struct AccessToken: Codable {
+struct OAuthTokenResponseBody: Codable {
     let accessToken: String
     let tokenType: String
     let scope: String

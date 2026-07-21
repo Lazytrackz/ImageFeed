@@ -6,7 +6,6 @@
 //
 
 import UIKit
-//import ProgressHUD
 import SwiftKeychainWrapper
 
 // MARK: - AuthViewController:
@@ -28,8 +27,6 @@ final class AuthViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureBackButton()
-        //KeychainWrapper.standard.removeObject(forKey: "access_token")
-        //print("del")
     }
     
     // MARK: - private methods
@@ -69,7 +66,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
         UIBlockingProgressHUD.show()
         OAuth2Service.shared.fetchOAuthToken(code) { [weak self] result in
             UIBlockingProgressHUD.dismiss()
-            guard let self = self else {
+            guard let self else {
                 return }
             switch result {
             case .success:

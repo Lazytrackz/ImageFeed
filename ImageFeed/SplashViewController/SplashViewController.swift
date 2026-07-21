@@ -6,7 +6,6 @@
 //
 
 import UIKit
-//import ProgressHUD
 
 // MARK: - SplashViewController
 
@@ -47,7 +46,7 @@ final class SplashViewController: UIViewController {
             }
         }
     }
-        
+    
     private func showAuthWindow() {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
         guard let viewController = storyboard.instantiateViewController(withIdentifier: Identifier.authViewControllerIdentifier) as? AuthViewController else {

@@ -50,15 +50,4 @@ final class ImagesListCell: UITableViewCell {
     func setRow(currentRow: Int) {
         rowIndex = currentRow
     }
-    
-  
-      
-        
-    
-    
-    
-  
-    
-    
-    
 }
