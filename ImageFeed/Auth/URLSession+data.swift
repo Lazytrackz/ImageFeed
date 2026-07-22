@@ -17,6 +17,11 @@ enum NetworkError: Error {
     case decodingError(Error)
 }
 
+enum StatusCode {
+    static let statusCodeLess = 200
+    static let statusCodeGreater = 300
+}
+
 // MARK: - extension
 
 extension URLSession {
@@ -31,7 +36,7 @@ extension URLSession {
         }
         let task = dataTask(with: request, completionHandler: { data, response, error in
             if let data = data, let response = response, let statusCode = (response as? HTTPURLResponse)?.statusCode {
-                if 200 ..< 300 ~= statusCode {
+                if StatusCode.statusCodeLess ..< StatusCode.statusCodeGreater ~= statusCode {
                     fulfillCompletionOnTheMainThread(.success(data))
                 } else {
                     fulfillCompletionOnTheMainThread(.failure(NetworkError.httpStatusCode(statusCode)))
@@ -46,6 +51,32 @@ extension URLSession {
                 print(NetworkError.urlSessionError)
             }
         })
+        return task
+    }
+}
+
+extension URLSession {
+    func objectTask<T: Decodable>(
+        for request: URLRequest,
+        completion: @escaping (Result<T, Error>) -> Void
+    ) -> URLSessionTask {
+        let decoder = JSONDecoder()
+        let task = data(for: request) { (result: Result<Data, Error>) in
+            switch result {
+            case .success(let data):
+                do {
+                    let decodedData = try decoder.decode(T.self, from: data)
+                    print(decodedData)
+                    completion(.success(decodedData))
+                } catch {
+                    print("Decoding error: \(error.localizedDescription),\(String(data: data, encoding: .utf8) ?? "")")
+                    completion(.failure(error))
+                }
+            case .failure(let error):
+                print("Request error: \(error.localizedDescription)")
+                completion(.failure(error))
+            }
+        }
         return task
     }
 }
