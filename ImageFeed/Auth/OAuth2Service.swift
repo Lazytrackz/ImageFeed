@@ -77,12 +77,12 @@ final class OAuth2Service {
                         self.tokenStorage = OAuth2TokenStorage()
                         self.tokenStorage?.token = data.accessToken
                     }
-                    self.task = nil
-                    self.lastCode = nil
                 } else {
                     completion(.failure(AuthServiceError.invalidRequest))
                     return
                 }
+                self.task = nil
+                self.lastCode = nil
             case .failure(let error):
                 print("Request error: \(error.localizedDescription)")
                 completion(.failure(error))
