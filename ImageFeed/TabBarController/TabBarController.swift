@@ -16,6 +16,10 @@ final class TabBarController: UITabBarController {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        configureViewControllers()
+    }
+
+    private func configureViewControllers() {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
         let imagesListViewController = storyboard.instantiateViewController(
             withIdentifier: Identifier.imageListViewControllerIdentifier

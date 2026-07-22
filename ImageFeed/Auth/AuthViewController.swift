@@ -27,6 +27,9 @@ final class AuthViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureBackButton()
+        //KeychainWrapper.standard.removeObject(forKey: "access_token")
+        //print("del")
+        
     }
     
     // MARK: - private methods

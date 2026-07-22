@@ -61,7 +61,9 @@ final class OAuth2Service {
             return
         }
         task?.cancel()
+        
         lastCode = code
+ 
         guard let request = makeTokenRequest(code: code) else {
             completion(.failure(AuthServiceError.invalidRequest))
             return
@@ -69,17 +71,25 @@ final class OAuth2Service {
         let task = URLSession.shared.objectTask(for: request, completion: {(result: Result<OAuthTokenResponseBody, Error>) in
             switch result {
             case .success(let data):
-                completion(.success(data.accessToken))
-                if !data.accessToken.isEmpty {
-                    self.tokenStorage = OAuth2TokenStorage()
-                    self.tokenStorage?.token = data.accessToken
+                if code == self.lastCode {
+                    completion(.success(data.accessToken))
+                    if !data.accessToken.isEmpty {
+                        self.tokenStorage = OAuth2TokenStorage()
+                        self.tokenStorage?.token = data.accessToken
+                    }
+                    self.task = nil
+                    self.lastCode = nil
+                } else {
+                    completion(.failure(AuthServiceError.invalidRequest))
+                    return
                 }
             case .failure(let error):
                 print("Request error: \(error.localizedDescription)")
                 completion(.failure(error))
+                
+                self.task = nil
+                self.lastCode = nil
             }
-            self.task = nil
-            self.lastCode = nil
         })
         self.task = task
         task.resume()
