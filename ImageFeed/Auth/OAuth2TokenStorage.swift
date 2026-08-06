@@ -14,7 +14,7 @@ final class OAuth2TokenStorage {
     
     // MARK: - private properties
     
-    private let tokenKey = "access_token"
+    private let tokenKey = Identifier.accessToken
     
     // MARK: - properties
     var token: String? {

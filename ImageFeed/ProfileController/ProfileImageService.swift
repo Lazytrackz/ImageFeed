@@ -44,6 +44,7 @@ final class ProfileImageService {
             print("Token not found")
             return
         }
+        print(token)
         guard let request = makeProfileImageRequest(token: token, username: username) else {
             completion(.failure(ProfileServiceError.invalidRequest))
             return
@@ -69,4 +70,9 @@ final class ProfileImageService {
         self.task = task
         task.resume()
     }
+    
+    func clearAvatar() {
+        avatarURL = nil
+    }
+    
 }

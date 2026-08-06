@@ -16,6 +16,7 @@ final class SplashViewController: UIViewController {
     
     private let storage = OAuth2TokenStorage()
     
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {

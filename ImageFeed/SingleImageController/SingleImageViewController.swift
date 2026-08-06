@@ -7,6 +7,7 @@
 
 
 import UIKit
+import Kingfisher
 
 //MARK: - SingleImageViewController
 
@@ -20,14 +21,15 @@ final class SingleImageViewController: UIViewController {
     
     // MARK: - Properties
     
-    private var image: UIImage? 
+    private var image: UIImage?
+    private var imageUrL: URL?
     
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configScrollView()
-        configImageView()
+        configCellImage()
     }
     
     // MARK: - Actions
@@ -44,6 +46,25 @@ final class SingleImageViewController: UIViewController {
     }
     
     // MARK: - Private methods
+    
+    private func configCellImage(){
+        
+        imageView.kf.indicatorType = .activity
+        UIBlockingProgressHUD.show()
+        imageView.kf.setImage(
+            with: imageUrL,
+        ) { result in
+            UIBlockingProgressHUD.dismiss()
+            switch result {
+            case .success(let value):
+                self.image = value.image
+                self.imageView.frame.size = value.image.size
+                self.rescaleAndCenterImageInScrollView(image: value.image)
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
     
     private func rescaleAndCenterImageInScrollView(image: UIImage) {
         let minZoomScale = scrollView.minimumZoomScale
@@ -66,13 +87,6 @@ final class SingleImageViewController: UIViewController {
         scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
     }
     
-    private func configImageView() {
-        guard let image else { return }
-        imageView.image = image
-        imageView.frame.size = image.size
-        rescaleAndCenterImageInScrollView(image: image)
-    }
-    
     private func configScrollView() {
         scrollView.minimumZoomScale = 0.1
         scrollView.maximumZoomScale = 1.25
@@ -81,8 +95,8 @@ final class SingleImageViewController: UIViewController {
     
     // MARK: - Methods
     
-    func setImage(newImage: UIImage) {
-        image = newImage
+    func setImageURL(newImageURL: URL) {
+        imageUrL = newImageURL
     }
 }
 
