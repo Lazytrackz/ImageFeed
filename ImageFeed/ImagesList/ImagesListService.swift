@@ -12,6 +12,7 @@ import CoreGraphics
 
 enum ImageListServiceError: Error {
     case invalidRequest
+    case photoNotFound
 }
 
 //MARK: - ImagesListService
@@ -92,7 +93,8 @@ final class ImagesListService {
                     self.photos[index] = newPhoto
                     completion(.success(Void()))
                 } else {
-                    completion(.failure(print("Index not found") as! Error))
+                    completion(.failure(ImageListServiceError.photoNotFound))
+                    print("Index not found")
                     return
                 }
                 self.task = nil
