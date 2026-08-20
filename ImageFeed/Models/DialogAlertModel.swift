@@ -9,7 +9,7 @@ import Foundation
 
 //MARK: - DialogAlertModel
 
-struct DialogAlertModel {
+public struct DialogAlertModel {
     var title: String
     var message: String
     var buttonYesText: String

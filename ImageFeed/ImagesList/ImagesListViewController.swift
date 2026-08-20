@@ -11,11 +11,15 @@ import Kingfisher
 
 //MARK: - ImagesListViewController
 
-final class ImagesListViewController: UIViewController {
+final class ImagesListViewController: UIViewController, ImagesListViewControllerProtocol {
+  
+    
+   
     
     // MARK: - IBOutlets
     
-    @IBOutlet private var tableView: UITableView!
+    @IBOutlet var tableView: UITableView!
+    
     
     // MARK: - Private properties
     
@@ -24,22 +28,35 @@ final class ImagesListViewController: UIViewController {
     private var isLoading: Bool = false
     private var ImagesListServiceObserver: NSObjectProtocol?
     
+    var presenter: ImagesListViewPresenterProtocol?
+   
+    
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableViewConfig()
+        //tableViewConfig()
+        
+        presenter?.imagesListViewDidLoad()
         observeImageList()
     }
     
     // MARK: - Private methods
     
-    private func tableViewConfig() {
+    func tableViewConfig() {
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
     }
     
+    func updatePhotoList(photos: [Photo]) {
+        self.photos = photos
+    }
+    
+    
+    
     private func observeImageList() {
-        ImagesListService.shared.fetchPhotosNextPage()
+        //ImagesListService.shared.fetchPhotosNextPage()//презентер
+        presenter?.fetchPhotosNextPage()
         ImagesListServiceObserver = NotificationCenter.default
             .addObserver(
                 forName: ImagesListService.didChangeNotification,
@@ -47,17 +64,20 @@ final class ImagesListViewController: UIViewController {
                 queue: .main
             ) { [weak self] _ in
                 guard let self = self else { return }
-                self.updateTableViewAnimated()
+                //self.updateTableViewAnimated()
+                presenter?.configTableViewAnimated(photos: photos)
             }
     }
     
-    private func updateTableViewAnimated() {
+    
+    
+    func updateTableViewAnimated(oldIndex: Int, newIndex: Int) {
         isLoading = true
-        let newIndex = ImagesListService.shared.photos.count
-        let oldIndex = photos.count
-        photos = ImagesListService.shared.photos
+        //let newIndex = ImagesListService.shared.photos.count
+        //let oldIndex = photos.count
+        //photos = ImagesListService.shared.photos
         var indexPaths: [IndexPath] = []
-        for photo  in oldIndex..<newIndex {
+        for photo in oldIndex..<newIndex {
             indexPaths.append(IndexPath(row: photo, section: 0))
         }
         tableView.performBatchUpdates {
@@ -76,9 +96,10 @@ final class ImagesListViewController: UIViewController {
                 print("Invalid segue destination")
                 return
             }
-            let profileFullImageURL = photos[indexPath.row].largeImageURL
+            let profileFullImageURL = photos[indexPath.row].largeImageURL //презентер
             guard let urlImage = URL(string: profileFullImageURL) else { return }
             viewController.setImageURL(newImageURL: urlImage)
+            
         } else {
             super.prepare(for: segue, sender: sender)
         }
@@ -97,6 +118,7 @@ extension ImagesListViewController {
             guard let urlImage = URL(string: profileThumbImageURL) else { return }
             let photoDate = photos[indexPath.row].createdAt
             let isLike = photos[indexPath.row].isLiked
+            
             cell.delegate = self
             cell.configCellImage(urlImage: urlImage, imageDate: photoDate)
             cell.setIsLiked(isLiked: isLike)
@@ -105,6 +127,7 @@ extension ImagesListViewController {
             self.tableView.reloadData()
         }
     }
+    
 }
 
 extension ImagesListViewController: UITableViewDelegate {
@@ -115,7 +138,7 @@ extension ImagesListViewController: UITableViewDelegate {
         performSegue(withIdentifier: Identifier.showSingleImageSegueIdentifier, sender: indexPath)
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath, cell: ImagesListCell ) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath, cell: ImagesListCell) -> CGFloat {
         let imageHeight = photos[indexPath.row].size.height
         let imageWidth  = photos[indexPath.row].size.width
         let horizontalIndents: CGFloat = 32
@@ -140,6 +163,7 @@ extension ImagesListViewController: UITableViewDataSource {
             logger.warning("Failed to load cell")
             return UITableViewCell()
         }
+       
         configCell(for: imageListCell, with: indexPath)
         return imageListCell
     }
@@ -152,6 +176,7 @@ extension ImagesListViewController: UITableViewDataSource {
                 observeImageList()
             }
         }
+        
     }
 }
 
@@ -160,11 +185,30 @@ extension ImagesListViewController: ImagesListCellDelegate {
     // MARK: - Methods
     
     func imageListCellDidTapLike(_ cell: ImagesListCell) {
+        
+        
         guard let indexPath = tableView.indexPath(for: cell) else { return }
+        
         let photo = photos[indexPath.row]
         let id = photo.id
         let isLike = photo.isLiked
-        UIBlockingProgressHUD.show()
+        cell.setIsLiked(isLiked: !isLike)
+        self.presenter?.updateLike(photoId: id, isLike: isLike)
+        
+        
+    
+            /*self.presenter?.updateLike(photoId: id, isLike: isLike)
+            print(self.photos[indexPath.row].isLiked)
+        
+        
+    
+           
+            cell.setIsLiked(isLiked: self.photos[indexPath.row].isLiked)*/
+        
+        
+        
+        
+        /*UIBlockingProgressHUD.show()
         ImagesListService.shared.changeLike(photoId: id, isLike: !isLike) { [weak self] result in
             guard let self else {
                 return }
@@ -177,6 +221,6 @@ extension ImagesListViewController: ImagesListCellDelegate {
                 UIBlockingProgressHUD.dismiss()
                 print("Error fetching data")
             }
-        }
+        }*/
     }
 }

@@ -22,6 +22,7 @@ final class TabBarController: UITabBarController {
     override func awakeFromNib() {
         super.awakeFromNib()
         configureViewControllers()
+     
     }
     
     private func configureTabBarAppearance() {
@@ -39,11 +40,20 @@ final class TabBarController: UITabBarController {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
         let imagesListViewController = storyboard.instantiateViewController(
             withIdentifier: Identifier.imageListViewControllerIdentifier
-        )
+        ) as! ImagesListViewController
+        
         let profileViewController = ProfileViewController()
+        let profilePresenter = ProfilePresenter()
+        profilePresenter.view = profileViewController
+        profileViewController.presenter = profilePresenter
+        let imagesListPresenter = ImagesListViewPresenter()
+        imagesListPresenter.view = imagesListViewController
+        imagesListViewController.presenter = imagesListPresenter
+        
         profileViewController.tabBarItem = UITabBarItem(
             title: "",
             image: UIImage(named: "tab_profile_active"),
+            
             selectedImage: nil
         )
         self.viewControllers = [imagesListViewController, profileViewController]

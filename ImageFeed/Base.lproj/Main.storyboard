@@ -40,6 +40,7 @@
                                                 </imageView>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XYE-LM-f3b" userLabel="Like button">
                                                     <rect key="frame" x="333" y="4" width="44" height="44"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="LikeButton"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="44" id="4Sb-Vd-NPO"/>
                                                         <constraint firstAttribute="height" constant="44" id="6Fp-hm-Fsy"/>
@@ -77,6 +78,9 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" name="YP Black (iOS)"/>
+                                        <accessibility key="accessibilityConfiguration" identifier="Cell">
+                                            <bool key="isElement" value="YES"/>
+                                        </accessibility>
                                         <connections>
                                             <outlet property="cellImage" destination="JYd-RW-qHE" id="hHc-OC-SGp"/>
                                             <outlet property="dateLabel" destination="HuC-C2-ur4" id="S8a-bN-UdZ"/>
@@ -138,6 +142,7 @@
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PQg-7W-qGr">
                                 <rect key="frame" x="37" y="631" width="318" height="48"/>
+                                <accessibility key="accessibilityConfiguration" identifier="AuthButton"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="Myo-p6-DFv"/>
                                 </constraints>
@@ -186,7 +191,7 @@
         <!--Web View View Controller-->
         <scene sceneID="unp-uc-AAa">
             <objects>
-                <viewController id="vmm-EY-Ekg" customClass="WebViewViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="WebViewViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="vmm-EY-Ekg" customClass="WebViewViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="t9G-X9-GtX">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="793"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -206,6 +211,10 @@
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="GO0-cj-tNV"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <accessibility key="accessibilityConfiguration" identifier="WebView">
+                            <accessibilityTraits key="traits" staticText="YES" searchField="YES"/>
+                            <bool key="isElement" value="YES"/>
+                        </accessibility>
                         <constraints>
                             <constraint firstItem="wqY-cl-Rup" firstAttribute="top" secondItem="GO0-cj-tNV" secondAttribute="top" id="2kq-pV-pCq"/>
                             <constraint firstItem="eSV-AT-YQN" firstAttribute="leading" secondItem="t9G-X9-GtX" secondAttribute="leading" id="2yK-Er-V2q"/>
@@ -284,6 +293,7 @@
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i1S-01-sJa" userLabel="returnButton">
                                 <rect key="frame" x="8" y="70" width="24" height="24"/>
+                                <accessibility key="accessibilityConfiguration" identifier="BackButton"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="24" id="XgD-JZ-gFR"/>
                                     <constraint firstAttribute="height" constant="24" id="lwP-da-mYu"/>

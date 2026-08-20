@@ -11,6 +11,8 @@ import Kingfisher
 //MARK: - ImagesListCell
 
 final class ImagesListCell: UITableViewCell {
+  
+    
     
     // MARK: - IBOutlets
     
@@ -20,6 +22,8 @@ final class ImagesListCell: UITableViewCell {
     @IBOutlet weak private var gradientImage: UIImageView!
     
     // MARK: - Properties
+    
+    var presenter: ImagesListViewPresenterProtocol? 
     
     weak var delegate: ImagesListCellDelegate?
     private let gradientRectangleImage = UIImage(named: "Rectangle")
@@ -65,4 +69,13 @@ final class ImagesListCell: UITableViewCell {
     func setIsLiked(isLiked: Bool) {
         likeButton.setImage(UIImage(resource: isLiked == true ? .active: .noActive), for: .normal)
     }
+    
+    
+    
+    
+
+    
+   
+    
+    
 }

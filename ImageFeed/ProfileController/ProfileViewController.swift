@@ -9,12 +9,11 @@
 import UIKit
 import Kingfisher
 
-
 //MARK: - ProfileViewController
 
-final class ProfileViewController: UIViewController {
+final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
     
-    // MARK: - Private properties
+    // MARK: - Properties
     
     private var profileImageView: UIImageView = UIImageView()
     private var nameLabel: UILabel = UILabel()
@@ -23,47 +22,55 @@ final class ProfileViewController: UIViewController {
     private var logOutButton: UIButton = UIButton()
     private var profileImageServiceObserver: NSObjectProtocol?
     private var dialogAlertPresenter: DialogAlertPresenter = DialogAlertPresenter()
-    
+    var presenter: ProfilePresenterProtocol?
     
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configProfileView()
+        //presenter = ProfilePresenter()
+        //presenter?.view = self
+        presenter?.loadProfileView()
+        //configProfileView()
         observeProfileImage()
     }
     
     // MARK: - Actions
     
     @objc private func didTapLogoutButton() {
-        showLogoutAlert(isYes: true)
+        presenter?.configLogoutAlert(true)
     }
     
     // MARK: - Private methods
     
-    private func showSplashWindow() {
+    func showLogoutAlert(alert: DialogAlertModel, isYes: Bool ) {
+        dialogAlertPresenter.show(alertModel: alert, controller: self, isYes: isYes, accessibilityId: "LogoutDialogAlert")
+    }
+    
+    func showSplashWindow() {
         let viewController = SplashViewController()
         viewController.modalPresentationStyle = .fullScreen
         present(viewController, animated: true, completion: nil)
     }
     
-    private func showLogoutAlert(isYes: Bool) {
-        let alertModel = DialogAlertModel(title: AlertsConstants.logoutHeader,
-                                          message: AlertsConstants.logoutMessage,
-                                          buttonYesText: AlertsConstants.logoutButtonYes,
-                                          buttonNoText: AlertsConstants.logoutButtonNo){ [weak self] isYes in guard let self else {
-                                              return }
-            if isYes {
-                ProfileLogoutService.shared.logout()
-                showSplashWindow()
-            }
-        }
-        dialogAlertPresenter.show(alertModel: alertModel, controller: self, isYes: isYes, accessibilityId: "LogoutDialogAlert")
-    }
+    /*func showLogoutAlert(_ isYes: Bool) {
+     let alertModel = DialogAlertModel(title: AlertsConstants.logoutHeader,
+     message: AlertsConstants.logoutMessage,
+     buttonYesText: AlertsConstants.logoutButtonYes,
+     buttonNoText: AlertsConstants.logoutButtonNo){ [weak self] isYes in guard let self else {
+     return }
+     if isYes {
+     ProfileLogoutService.shared.logout()
+     showSplashWindow()
+     }
+     }
+     dialogAlertPresenter.show(alertModel: alertModel, controller: self, isYes: isYes, accessibilityId: "LogoutDialogAlert")
+     }*/
     
-    private func observeProfileImage() {
-        guard let profile = ProfileService.shared.profile else { return }
-        updateProfile(profile: profile)
+    private func observeProfileImage() { //в презентер?
+        //guard let profile = ProfileService.shared.profile else { return }
+        presenter?.updateProfile()
+        //updateProfile(profile: profile)
         profileImageServiceObserver = NotificationCenter.default
             .addObserver(
                 forName: ProfileImageService.didChangeNotification,
@@ -71,28 +78,27 @@ final class ProfileViewController: UIViewController {
                 queue: .main
             ) { [weak self] _ in
                 guard let self = self else { return }
-                self.updateAvatar()
+                presenter?.updateAvatar()
             }
-        updateAvatar()
+        presenter?.updateAvatar()
     }
     
-    private func updateAvatar() {
-        guard
-            let profileImageURL = ProfileImageService.shared.avatarURL,
-            let urlImage = URL(string: profileImageURL)
-        else { return }
-        configProfileImage(urlImage: urlImage)
-    }
+    /* private func updateAvatar() { // в презентер
+     guard
+     let profileImageURL = ProfileImageService.shared.avatarURL,
+     let urlImage = URL(string: profileImageURL)
+     else { return }
+     configProfileImage(urlImage: urlImage)
+     }*/
     
-    private func configProfileImage(urlImage: URL) {
-        
+    func configProfileImage(urlImage: URL) {
         let processor = RoundCornerImageProcessor(cornerRadius: 61)
         profileImageView.kf.indicatorType = .activity
         profileImageView.kf.setImage(with: urlImage,
                                      options: [.processor(processor)])
     }
     
-    private func updateProfile(profile: Profile) {
+    func configProfile(profile: Profile) {
         nameLabel.text = profile.name.isEmpty
         ? DefaultsNames.defaultUserName
         : profile.name
@@ -112,7 +118,7 @@ final class ProfileViewController: UIViewController {
         view.addSubview(profileImageView)
     }
     
-    private func configProfileView() {
+    func configProfileView() {
         self.view.backgroundColor = .ypBlackIOS
         makeProfileImageView()
         makeNameLabel()
@@ -157,6 +163,7 @@ final class ProfileViewController: UIViewController {
             target: self,
             action: #selector(self.didTapLogoutButton)
         )
+        logOutButton.accessibilityIdentifier = "LogoutButton"
         logOutButton.tintColor = UIColor(named: "YP Red (iOS)")
         logOutButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(logOutButton)
