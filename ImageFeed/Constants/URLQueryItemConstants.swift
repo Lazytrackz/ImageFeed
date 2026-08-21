@@ -19,4 +19,7 @@ enum URLQueryItemConstants {
     static let clientSecret = "client_secret"
     static let grandType = "grant_type"
     static let authorizationCode = "authorization_code"
+    static let pageNumberToRetrieve = "page"
+    static let numberOfItemsPerPage = "per_page"
+    static let photoId = "id"
 }

@@ -9,6 +9,7 @@
 import UIKit
 import Kingfisher
 
+
 //MARK: - ProfileViewController
 
 final class ProfileViewController: UIViewController {
@@ -21,6 +22,8 @@ final class ProfileViewController: UIViewController {
     private var descriptionLabel: UILabel = UILabel()
     private var logOutButton: UIButton = UIButton()
     private var profileImageServiceObserver: NSObjectProtocol?
+    private var dialogAlertPresenter: DialogAlertPresenter = DialogAlertPresenter()
+    
     
     // MARK: - Lifecycle
     
@@ -32,9 +35,31 @@ final class ProfileViewController: UIViewController {
     
     // MARK: - Actions
     
-    @objc private func didTapLogoutButton() {}
+    @objc private func didTapLogoutButton() {
+        showLogoutAlert(isYes: true)
+    }
     
     // MARK: - Private methods
+    
+    private func showSplashWindow() {
+        let viewController = SplashViewController()
+        viewController.modalPresentationStyle = .fullScreen
+        present(viewController, animated: true, completion: nil)
+    }
+    
+    private func showLogoutAlert(isYes: Bool) {
+        let alertModel = DialogAlertModel(title: AlertsConstants.logoutHeader,
+                                          message: AlertsConstants.logoutMessage,
+                                          buttonYesText: AlertsConstants.logoutButtonYes,
+                                          buttonNoText: AlertsConstants.logoutButtonNo){ [weak self] isYes in guard let self else {
+                                              return }
+            if isYes {
+                ProfileLogoutService.shared.logout()
+                showSplashWindow()
+            }
+        }
+        dialogAlertPresenter.show(alertModel: alertModel, controller: self, isYes: isYes, accessibilityId: "LogoutDialogAlert")
+    }
     
     private func observeProfileImage() {
         guard let profile = ProfileService.shared.profile else { return }
@@ -126,8 +151,9 @@ final class ProfileViewController: UIViewController {
     }
     
     private func makeLogOutButton() {
+        guard let image = UIImage(systemName: "ipad.and.arrow.forward") else { return }
         logOutButton = UIButton.systemButton(
-            with: UIImage(systemName: "ipad.and.arrow.forward")!,
+            with: image,
             target: self,
             action: #selector(self.didTapLogoutButton)
         )

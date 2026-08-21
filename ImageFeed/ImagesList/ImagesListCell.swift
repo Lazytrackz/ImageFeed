@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 //MARK: - ImagesListCell
 
@@ -20,9 +21,7 @@ final class ImagesListCell: UITableViewCell {
     
     // MARK: - Properties
     
-    static let reuseIdentifier = "ImagesListCell"
-    private var imageForCell: UIImage?
-    private var rowIndex: Int?
+    weak var delegate: ImagesListCellDelegate?
     private let gradientRectangleImage = UIImage(named: "Rectangle")
     private let today = Date()
     private lazy var dateFormatter: DateFormatter = {
@@ -33,21 +32,37 @@ final class ImagesListCell: UITableViewCell {
         return formatter
     }()
     
+    // MARK: - IBActions
+    
+    @IBAction func likeButtonClicked(_ sender: UIButton) {
+        delegate?.imageListCellDidTapLike(self)
+    }
+    
     // MARK: - Methods
     
-    func configCell() {
-        gradientImage.image = gradientRectangleImage
-        cellImage.image = imageForCell
-        dateLabel.text = dateFormatter.string(from: today)
-        guard let rowIndex else {return}
-        likeButton.setImage(UIImage(resource: rowIndex % 2 == 0 ? .active : .noActive), for: .normal)
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        cellImage.kf.cancelDownloadTask()
     }
     
-    func setCellImage(newImage: UIImage) {
-        imageForCell = newImage
+    func configCellImage(urlImage: URL, imageDate: Date?){
+        cellImage.kf.indicatorType = .activity
+        cellImage.kf.setImage(
+            with: urlImage,
+            placeholder: UIImage(named: "PhotosStub")
+        ) { result in
+            switch result {
+            case .success(_):
+                self.gradientImage.image = self.gradientRectangleImage
+                let date = imageDate ?? self.today
+                self.dateLabel.text = self.dateFormatter.string(from: date)
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
     
-    func setRow(currentRow: Int) {
-        rowIndex = currentRow
+    func setIsLiked(isLiked: Bool) {
+        likeButton.setImage(UIImage(resource: isLiked == true ? .active: .noActive), for: .normal)
     }
 }

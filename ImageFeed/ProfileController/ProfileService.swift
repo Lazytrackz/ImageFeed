@@ -51,7 +51,8 @@ final class ProfileService {
         let task = URLSession.shared.objectTask(for: request, completion: {(result: Result<ProfileResult, Error>) in
             switch result {
             case .success(let data):
-                guard let firstName = data.firstName, let lastName = data.lastName else { return }
+                let firstName = data.firstName ?? ""
+                let lastName = data.lastName ?? ""
                 let profile = Profile(
                     username: data.username,
                     name: firstName + " " + lastName,
@@ -68,4 +69,10 @@ final class ProfileService {
         self.task = task
         task.resume()
     }
+    
+    
+    func clearProfile() {
+        profile = nil
+    }
+    
 }
