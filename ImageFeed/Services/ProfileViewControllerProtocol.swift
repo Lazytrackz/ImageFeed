@@ -15,7 +15,7 @@ public protocol ProfileViewControllerProtocol: AnyObject {
     
     var presenter: ProfilePresenterProtocol? { get set }
     
-    //MARK: - Properties
+    //MARK: - Public methods
     
     func configProfileView()
     func configProfile(profile: Profile)

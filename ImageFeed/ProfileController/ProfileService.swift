@@ -17,30 +17,14 @@ enum ProfileServiceError: Error {
 
 final class ProfileService {
     
-    //MARK: - private properties
+    //MARK: - Properties
     
     private var task: URLSessionTask?
     private(set) var profile: Profile?
     private init() {}
-    
-    //MARK: - properties
-    
     static let shared = ProfileService()
     
-    //MARK: - private methods
-    
-    private func makeProfileRequest(token: String) -> URLRequest? {
-        guard let url = URL(string: UrlConstants.profileRequest) else {
-            print("Unable to make request")
-            return nil
-        }
-        var request = URLRequest(url: url)
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        request.httpMethod = "GET"
-        return request
-    }
-    
-    //MARK: - methods
+    //MARK: - Public methods
     
     func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
         task?.cancel()
@@ -70,9 +54,20 @@ final class ProfileService {
         task.resume()
     }
     
-    
     func clearProfile() {
         profile = nil
     }
     
+    //MARK: - Private methods
+    
+    private func makeProfileRequest(token: String) -> URLRequest? {
+        guard let url = URL(string: UrlConstants.profileRequest) else {
+            print("Unable to make request")
+            return nil
+        }
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.httpMethod = "GET"
+        return request
+    }
 }

@@ -7,21 +7,19 @@
 
 import Foundation
 
-
 enum AuthServiceError: Error {
     case invalidRequest
 }
-
 
 // MARK: - OOAuth2Service
 
 final class OAuth2Service {
     
-    // MARK: - static properties
+    // MARK: - Static properties
     
     static let shared = OAuth2Service()
     
-    // MARK: - private properties
+    // MARK: - Private properties
     
     private var tokenStorage: OAuth2TokenStorage?
     private let urlSession = URLSession.shared
@@ -29,30 +27,7 @@ final class OAuth2Service {
     private var lastCode: String?
     private init() {}
     
-    // MARK: - private methods
-    
-    private func makeTokenRequest(code: String) -> URLRequest? {
-        guard var url = URLComponents(string: UrlConstants.tokenRequest) else {
-            print("Unable to make request")
-            return nil
-        }
-        url.queryItems = [
-            URLQueryItem(name: URLQueryItemConstants.clientId, value: UrlConstants.accessKey),
-            URLQueryItem(name: URLQueryItemConstants.clientSecret, value: UrlConstants.secretKey),
-            URLQueryItem(name: URLQueryItemConstants.redirectUri, value: UrlConstants.redirectURI),
-            URLQueryItem(name: URLQueryItemConstants.code, value: code),
-            URLQueryItem(name: URLQueryItemConstants.grandType, value: URLQueryItemConstants.authorizationCode)
-        ]
-        guard let token = url.url else {
-            print("Loading url failed")
-            return nil
-        }
-        var request = URLRequest(url: token)
-        request.httpMethod = "POST"
-        return request
-    }
-    
-    // MARK: - methods
+    // MARK: - Public methods
     
     func fetchOAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) {
         assert(Thread.isMainThread)
@@ -61,9 +36,7 @@ final class OAuth2Service {
             return
         }
         task?.cancel()
-        
         lastCode = code
- 
         guard let request = makeTokenRequest(code: code) else {
             completion(.failure(AuthServiceError.invalidRequest))
             return
@@ -93,5 +66,28 @@ final class OAuth2Service {
         })
         self.task = task
         task.resume()
+    }
+    
+    // MARK: - Private methods
+    
+    private func makeTokenRequest(code: String) -> URLRequest? {
+        guard var url = URLComponents(string: UrlConstants.tokenRequest) else {
+            print("Unable to make request")
+            return nil
+        }
+        url.queryItems = [
+            URLQueryItem(name: URLQueryItemConstants.clientId, value: UrlConstants.accessKey),
+            URLQueryItem(name: URLQueryItemConstants.clientSecret, value: UrlConstants.secretKey),
+            URLQueryItem(name: URLQueryItemConstants.redirectUri, value: UrlConstants.redirectURI),
+            URLQueryItem(name: URLQueryItemConstants.code, value: code),
+            URLQueryItem(name: URLQueryItemConstants.grandType, value: URLQueryItemConstants.authorizationCode)
+        ]
+        guard let token = url.url else {
+            print("Loading url failed")
+            return nil
+        }
+        var request = URLRequest(url: token)
+        request.httpMethod = "POST"
+        return request
     }
 }

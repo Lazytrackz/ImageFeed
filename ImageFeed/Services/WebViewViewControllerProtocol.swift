@@ -15,10 +15,9 @@ public protocol WebViewViewControllerProtocol: AnyObject {
     
     var presenter: WebViewPresenterProtocol? { get set }
     
-    //MARK: - Methods
+    //MARK: - Public methods
     
     func load(request: URLRequest)
     func setProgressValue(_ newValue: Float)
     func setProgressHidden(_ isHidden: Bool)
-    
 }

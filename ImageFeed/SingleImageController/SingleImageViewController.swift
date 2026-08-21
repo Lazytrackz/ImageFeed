@@ -45,10 +45,15 @@ final class SingleImageViewController: UIViewController {
         present(activityViewController, animated: true, completion: nil)
     }
     
+    // MARK: - Public methods
+    
+    func setImageURL(newImageURL: URL) {
+        imageUrL = newImageURL
+    }
+    
     // MARK: - Private methods
     
     private func configCellImage(){
-        
         imageView.kf.indicatorType = .activity
         UIBlockingProgressHUD.show()
         imageView.kf.setImage(
@@ -92,19 +97,13 @@ final class SingleImageViewController: UIViewController {
         scrollView.maximumZoomScale = 1.25
         scrollView.isScrollEnabled = false
     }
-    
-    // MARK: - Methods
-    
-    func setImageURL(newImageURL: URL) {
-        imageUrL = newImageURL
-    }
 }
 
 // MARK: - Extensions
 
 extension SingleImageViewController: UIScrollViewDelegate {
     
-    // MARK: - Methods
+    // MARK: - Public methods
     
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         imageView

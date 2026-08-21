@@ -28,10 +28,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //presenter = ProfilePresenter()
-        //presenter?.view = self
         presenter?.loadProfileView()
-        //configProfileView()
         observeProfileImage()
     }
     
@@ -41,7 +38,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         presenter?.configLogoutAlert(true)
     }
     
-    // MARK: - Private methods
+    // MARK: - Public methods
     
     func showLogoutAlert(alert: DialogAlertModel, isYes: Bool ) {
         dialogAlertPresenter.show(alertModel: alert, controller: self, isYes: isYes, accessibilityId: "LogoutDialogAlert")
@@ -52,44 +49,6 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         viewController.modalPresentationStyle = .fullScreen
         present(viewController, animated: true, completion: nil)
     }
-    
-    /*func showLogoutAlert(_ isYes: Bool) {
-     let alertModel = DialogAlertModel(title: AlertsConstants.logoutHeader,
-     message: AlertsConstants.logoutMessage,
-     buttonYesText: AlertsConstants.logoutButtonYes,
-     buttonNoText: AlertsConstants.logoutButtonNo){ [weak self] isYes in guard let self else {
-     return }
-     if isYes {
-     ProfileLogoutService.shared.logout()
-     showSplashWindow()
-     }
-     }
-     dialogAlertPresenter.show(alertModel: alertModel, controller: self, isYes: isYes, accessibilityId: "LogoutDialogAlert")
-     }*/
-    
-    private func observeProfileImage() { //в презентер?
-        //guard let profile = ProfileService.shared.profile else { return }
-        presenter?.updateProfile()
-        //updateProfile(profile: profile)
-        profileImageServiceObserver = NotificationCenter.default
-            .addObserver(
-                forName: ProfileImageService.didChangeNotification,
-                object: nil,
-                queue: .main
-            ) { [weak self] _ in
-                guard let self = self else { return }
-                presenter?.updateAvatar()
-            }
-        presenter?.updateAvatar()
-    }
-    
-    /* private func updateAvatar() { // в презентер
-     guard
-     let profileImageURL = ProfileImageService.shared.avatarURL,
-     let urlImage = URL(string: profileImageURL)
-     else { return }
-     configProfileImage(urlImage: urlImage)
-     }*/
     
     func configProfileImage(urlImage: URL) {
         let processor = RoundCornerImageProcessor(cornerRadius: 61)
@@ -110,14 +69,6 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         : profile.bio
     }
     
-    private func makeProfileImageView() {
-        let profileImage = UIImage(named: "Stub")
-        profileImageView = UIImageView(image: profileImage)
-        profileImageView.tintColor = .gray
-        profileImageView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(profileImageView)
-    }
-    
     func configProfileView() {
         self.view.backgroundColor = .ypBlackIOS
         makeProfileImageView()
@@ -130,6 +81,30 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         loginNameLabelConstraints()
         descriptionLabelConstraints()
         logOutButtonConstraints()
+    }
+    
+    // MARK: - Private methods
+    
+    private func observeProfileImage() {
+        presenter?.updateProfile()
+        profileImageServiceObserver = NotificationCenter.default
+            .addObserver(
+                forName: ProfileImageService.didChangeNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                guard let self = self else { return }
+                presenter?.updateAvatar()
+            }
+        presenter?.updateAvatar()
+    }
+    
+    private func makeProfileImageView() {
+        let profileImage = UIImage(named: "Stub")
+        profileImageView = UIImageView(image: profileImage)
+        profileImageView.tintColor = .gray
+        profileImageView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(profileImageView)
     }
     
     private func makeNameLabel() {

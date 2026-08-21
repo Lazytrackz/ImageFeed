@@ -10,7 +10,7 @@ import UIKit
 
 final class AlertPresenter {
     
-    // MARK: - Methods
+    // MARK: - Public methods
     
     func show(alertModel: AlertModel, controller: UIViewController, accessibilityId: String) {
         let alert = UIAlertController(

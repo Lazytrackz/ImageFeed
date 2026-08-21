@@ -21,5 +21,4 @@ enum UrlConstants {
     static let tokenRequest = "https://unsplash.com/oauth/token"
     static let photosListRequest = "https://api.unsplash.com/photos"
     static let photosLikeRequest = "https://api.unsplash.com/photos/:id/like"
-    
 }

@@ -7,15 +7,15 @@
 
 import Foundation
 
+//MARK: - ImagesListViewPresenter
 
 final class ImagesListViewPresenter: ImagesListViewPresenterProtocol {
-  
-  
-
-    weak var view: ImagesListViewControllerProtocol?
-
-
     
+    //MARK: - Properties
+    
+    weak var view: ImagesListViewControllerProtocol?
+    
+    //MARK: - Public methods
     
     func imagesListViewDidLoad() {
         view?.tableViewConfig()
@@ -26,15 +26,11 @@ final class ImagesListViewPresenter: ImagesListViewPresenterProtocol {
     }
     
     func configTableViewAnimated(photos: [Photo]) {
-        
         let newIndex = ImagesListService.shared.photos.count
         let oldIndex = photos.count
         view?.updatePhotoList(photos: ImagesListService.shared.photos)
         view?.updateTableViewAnimated(oldIndex: oldIndex, newIndex: newIndex)
     }
-    
-    
-    
     
     func updateLike(photoId: String, isLike: Bool) {
         UIBlockingProgressHUD.show()
@@ -50,7 +46,5 @@ final class ImagesListViewPresenter: ImagesListViewPresenterProtocol {
                 print("Error fetching data")
             }
         }
-     
     }
 }
-

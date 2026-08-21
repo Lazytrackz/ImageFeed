@@ -16,7 +16,7 @@ final class ProfilePresenter: ProfilePresenterProtocol {
     
     weak var view: ProfileViewControllerProtocol?
     
-    // MARK: - Methods
+    // MARK: - Public methods
     
     func configLogoutAlert(_ isYes: Bool) {
         let alertModel = DialogAlertModel(title: AlertsConstants.logoutHeader,

@@ -12,13 +12,13 @@ import SwiftKeychainWrapper
 
 final class AuthViewController: UIViewController {
     
-    // MARK: - private properties
+    // MARK: - Private properties
     
     private var webView: WebViewViewController = WebViewViewController()
     private var alertPresenter: AlertPresenter = AlertPresenter()
     private var splashView: SplashViewController?
     
-    // MARK: - properties
+    // MARK: - Properties
     
     weak var delegate: AuthViewControllerDelegate?
     
@@ -29,16 +29,7 @@ final class AuthViewController: UIViewController {
         configureBackButton()
     }
     
-    // MARK: - private methods
-    
-    private func configureBackButton() {
-        navigationController?.navigationBar.backIndicatorImage = UIImage(named: "nav_back_button")
-        navigationController?.navigationBar.backIndicatorTransitionMaskImage = UIImage(named: "nav_back_button")
-        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-        navigationItem.backBarButtonItem?.tintColor = UIColor(named: "YP Black (iOS)")
-    }
-    
-    // MARK: - override methods
+    // MARK: - Override methods
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == Identifier.segueWebViewIdentifier  {
@@ -58,13 +49,22 @@ final class AuthViewController: UIViewController {
             super.prepare(for: segue, sender: sender)
         }
     }
+    
+    // MARK: - Private methods
+    
+    private func configureBackButton() {
+        navigationController?.navigationBar.backIndicatorImage = UIImage(named: "nav_back_button")
+        navigationController?.navigationBar.backIndicatorTransitionMaskImage = UIImage(named: "nav_back_button")
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        navigationItem.backBarButtonItem?.tintColor = UIColor(named: "YP Black (iOS)")
+    }
 }
 
-// MARK: - extension
+// MARK: - Extension
 
 extension AuthViewController: WebViewViewControllerDelegate {
     
-    // MARK: - methods
+    // MARK: - Public Methods
     
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
         vc.dismiss(animated: true)
@@ -84,6 +84,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
             }
         }
     }
+    
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
         vc.dismiss(animated: true)
     }
@@ -92,7 +93,6 @@ extension AuthViewController: WebViewViewControllerDelegate {
         let alertModel = AlertModel(title: AlertsConstants.authErrorHeader,
                                     message: AlertsConstants.authErrorMessage,
                                     buttonText: AlertsConstants.authErrorButtonText){ [weak self] in guard let self = self else { return }
-            
             webViewViewControllerDidCancel(webView)
             splashView?.checkToken()
         }

@@ -11,7 +11,7 @@ import Foundation
 
 protocol AuthViewControllerDelegate: AnyObject {
     
-    // MARK: - Private methods
+    // MARK: - Public methods
     
     func didAuthenticate(_ vc: AuthViewController)
 }

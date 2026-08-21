@@ -31,38 +31,7 @@ final class ImagesListService {
     
     private init() {}
     
-    //MARK: - Private Methods
-    
-    private func makeListPhotosRequest(token: String, pageNumber: Int) -> URLRequest? {
-        guard var url = URLComponents(string: UrlConstants.photosListRequest) else {
-            print("Unable to make request")
-            return nil
-        }
-        url.queryItems = [
-            URLQueryItem(name: URLQueryItemConstants.pageNumberToRetrieve, value: String(pageNumber)),
-            URLQueryItem(name: URLQueryItemConstants.numberOfItemsPerPage, value: "10"),
-        ]
-        guard let finalUrl = url.url else {
-            print("Loading url failed")
-            return nil
-        }
-        var request = URLRequest(url: finalUrl)
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        request.httpMethod = "GET"
-        return request
-    }
-
-    private func changeLikeRequest(token: String, isLike: Bool, photoId: String) -> URLRequest? {
-        guard let url = URL(string: UrlConstants.photosListRequest + "/\(photoId)/like") else {print("Unable to make request")
-            return nil
-        }
-        var request = URLRequest(url: url)
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        request.httpMethod = isLike == true ? "POST" : "DELETE"
-        return request
-    }
-    
-    //MARK: - Methods
+    //MARK: - Public methods
     
     func changeLike(photoId: String, isLike: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
         task?.cancel()
@@ -108,18 +77,18 @@ final class ImagesListService {
         self.task = task
         task.resume()
     }
-        
+    
     func fetchPhotosNextPage() {
         task?.cancel()
         nextPage = (lastLoadedPage ?? 0) + 1
         guard let token = OAuth2TokenStorage().token else {
-         print("Token not found")
-         return
-         }
+            print("Token not found")
+            return
+        }
         guard let  nextPage else {
-         print("Page not found")
-         return
-         }
+            print("Page not found")
+            return
+        }
         guard let request = makeListPhotosRequest(token: token, pageNumber: nextPage) else {
             print(ImageListServiceError.invalidRequest)
             return
@@ -129,18 +98,14 @@ final class ImagesListService {
             case .success(let photos):
                 let lastLoadedPage = self.lastLoadedPage ?? 0
                 if nextPage - lastLoadedPage == 1 {
-                    for photo in photos {
-                        let createdAt = photo.createdAt ?? "Unknown date"
-                        let date = self.dateFormatter.date(from: createdAt)
-                        let description = photo.description ?? "No description"
-                        guard let date else { return }
-                        let singlePhoto = Photo(id: photo.id,
-                                                size: CGSize(width: photo.width, height: photo.height),
-                                                createdAt: date,
-                                                welcomeDescription: description,
-                                                thumbImageURL: photo.urls.thumb, largeImageURL: photo.urls.full, isLiked: photo.isLiked)
-                        self.photos.append(singlePhoto)
+                    let newPhotos = photos.map { photo in
+                        Photo(id: photo.id,
+                              size: CGSize(width: photo.width, height: photo.height),
+                              createdAt: self.dateFormatter.date(from: photo.createdAt ?? "Unknown date"),
+                              welcomeDescription: photo.description ?? "No description",
+                              thumbImageURL: photo.urls.thumb, largeImageURL: photo.urls.full, isLiked: photo.isLiked)
                     }
+                    self.photos.append(contentsOf: newPhotos)
                     NotificationCenter.default
                         .post(
                             name: ImagesListService.didChangeNotification,
@@ -161,5 +126,35 @@ final class ImagesListService {
     func clearPhotos() {
         photos.removeAll()
     }
-
+    
+    //MARK: - Private methods
+    
+    private func makeListPhotosRequest(token: String, pageNumber: Int) -> URLRequest? {
+        guard var url = URLComponents(string: UrlConstants.photosListRequest) else {
+            print("Unable to make request")
+            return nil
+        }
+        url.queryItems = [
+            URLQueryItem(name: URLQueryItemConstants.pageNumberToRetrieve, value: String(pageNumber)),
+            URLQueryItem(name: URLQueryItemConstants.numberOfItemsPerPage, value: "10"),
+        ]
+        guard let finalUrl = url.url else {
+            print("Loading url failed")
+            return nil
+        }
+        var request = URLRequest(url: finalUrl)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.httpMethod = "GET"
+        return request
+    }
+    
+    private func changeLikeRequest(token: String, isLike: Bool, photoId: String) -> URLRequest? {
+        guard let url = URL(string: UrlConstants.photosListRequest + "/\(photoId)/like") else {print("Unable to make request")
+            return nil
+        }
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.httpMethod = isLike == true ? "POST" : "DELETE"
+        return request
+    }
 }

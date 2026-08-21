@@ -12,11 +12,11 @@ import SwiftKeychainWrapper
 
 final class OAuth2TokenStorage {
     
-    // MARK: - private properties
+    // MARK: - Private properties
     
     private let tokenKey = Identifier.accessToken
     
-    // MARK: - properties
+    // MARK: - Properties
     var token: String? {
         get {
             return KeychainWrapper.standard.string(forKey: tokenKey)

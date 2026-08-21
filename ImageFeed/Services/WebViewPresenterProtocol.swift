@@ -15,7 +15,7 @@ public protocol WebViewPresenterProtocol {
     
     var view: WebViewViewControllerProtocol? { get set }
     
-    //MARK: - Methods
+    //MARK: - Public methods
     
     func viewDidLoad()
     func didUpdateProgressValue(_ newValue: Double)

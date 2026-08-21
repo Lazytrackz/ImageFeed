@@ -12,37 +12,28 @@ import Kingfisher
 //MARK: - ImagesListViewController
 
 final class ImagesListViewController: UIViewController, ImagesListViewControllerProtocol {
-  
-    
-   
     
     // MARK: - IBOutlets
     
     @IBOutlet var tableView: UITableView!
     
-    
-    // MARK: - Private properties
+    // MARK: - Properties
     
     private let logger = Logger(label: "ImageFeed.ImagesListViewController.")
     var photos: [Photo] = []
     private var isLoading: Bool = false
     private var ImagesListServiceObserver: NSObjectProtocol?
-    
     var presenter: ImagesListViewPresenterProtocol?
-   
-    
     
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //tableViewConfig()
-        
         presenter?.imagesListViewDidLoad()
         observeImageList()
     }
     
-    // MARK: - Private methods
+    // MARK: - Public methods
     
     func tableViewConfig() {
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
@@ -52,30 +43,8 @@ final class ImagesListViewController: UIViewController, ImagesListViewController
         self.photos = photos
     }
     
-    
-    
-    private func observeImageList() {
-        //ImagesListService.shared.fetchPhotosNextPage()//презентер
-        presenter?.fetchPhotosNextPage()
-        ImagesListServiceObserver = NotificationCenter.default
-            .addObserver(
-                forName: ImagesListService.didChangeNotification,
-                object: nil,
-                queue: .main
-            ) { [weak self] _ in
-                guard let self = self else { return }
-                //self.updateTableViewAnimated()
-                presenter?.configTableViewAnimated(photos: photos)
-            }
-    }
-    
-    
-    
     func updateTableViewAnimated(oldIndex: Int, newIndex: Int) {
         isLoading = true
-        //let newIndex = ImagesListService.shared.photos.count
-        //let oldIndex = photos.count
-        //photos = ImagesListService.shared.photos
         var indexPaths: [IndexPath] = []
         for photo in oldIndex..<newIndex {
             indexPaths.append(IndexPath(row: photo, section: 0))
@@ -85,7 +54,7 @@ final class ImagesListViewController: UIViewController, ImagesListViewController
         } completion: { _ in }
     }
     
-    // MARK: - Methods
+    // MARK: - Override methods
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == Identifier.showSingleImageSegueIdentifier {
@@ -104,8 +73,22 @@ final class ImagesListViewController: UIViewController, ImagesListViewController
             super.prepare(for: segue, sender: sender)
         }
     }
+    
+    // MARK: - Private methods
+    
+    private func observeImageList() {
+        presenter?.fetchPhotosNextPage()
+        ImagesListServiceObserver = NotificationCenter.default
+            .addObserver(
+                forName: ImagesListService.didChangeNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                guard let self = self else { return }
+                presenter?.configTableViewAnimated(photos: photos)
+            }
+    }
 }
-
 // MARK: - Extensions
 
 extension ImagesListViewController {
@@ -127,12 +110,11 @@ extension ImagesListViewController {
             self.tableView.reloadData()
         }
     }
-    
 }
 
 extension ImagesListViewController: UITableViewDelegate {
     
-    // MARK: - Methods
+    // MARK: - Public methods
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         performSegue(withIdentifier: Identifier.showSingleImageSegueIdentifier, sender: indexPath)
@@ -151,7 +133,7 @@ extension ImagesListViewController: UITableViewDelegate {
 
 extension ImagesListViewController: UITableViewDataSource {
     
-    // MARK: - Methods
+    // MARK: - Public methods
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         photos.count
@@ -163,7 +145,7 @@ extension ImagesListViewController: UITableViewDataSource {
             logger.warning("Failed to load cell")
             return UITableViewCell()
         }
-       
+        
         configCell(for: imageListCell, with: indexPath)
         return imageListCell
     }
@@ -176,51 +158,19 @@ extension ImagesListViewController: UITableViewDataSource {
                 observeImageList()
             }
         }
-        
     }
 }
 
 extension ImagesListViewController: ImagesListCellDelegate {
     
-    // MARK: - Methods
+    // MARK: - Public methods
     
     func imageListCellDidTapLike(_ cell: ImagesListCell) {
-        
-        
         guard let indexPath = tableView.indexPath(for: cell) else { return }
-        
         let photo = photos[indexPath.row]
         let id = photo.id
         let isLike = photo.isLiked
         cell.setIsLiked(isLiked: !isLike)
         self.presenter?.updateLike(photoId: id, isLike: isLike)
-        
-        
-    
-            /*self.presenter?.updateLike(photoId: id, isLike: isLike)
-            print(self.photos[indexPath.row].isLiked)
-        
-        
-    
-           
-            cell.setIsLiked(isLiked: self.photos[indexPath.row].isLiked)*/
-        
-        
-        
-        
-        /*UIBlockingProgressHUD.show()
-        ImagesListService.shared.changeLike(photoId: id, isLike: !isLike) { [weak self] result in
-            guard let self else {
-                return }
-            switch result {
-            case .success:
-                self.photos = ImagesListService.shared.photos
-                cell.setIsLiked(isLiked: self.photos[indexPath.row].isLiked)
-                UIBlockingProgressHUD.dismiss()
-            case .failure:
-                UIBlockingProgressHUD.dismiss()
-                print("Error fetching data")
-            }
-        }*/
     }
 }

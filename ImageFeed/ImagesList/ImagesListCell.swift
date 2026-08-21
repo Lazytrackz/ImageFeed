@@ -11,8 +11,6 @@ import Kingfisher
 //MARK: - ImagesListCell
 
 final class ImagesListCell: UITableViewCell {
-  
-    
     
     // MARK: - IBOutlets
     
@@ -23,8 +21,7 @@ final class ImagesListCell: UITableViewCell {
     
     // MARK: - Properties
     
-    var presenter: ImagesListViewPresenterProtocol? 
-    
+    var presenter: ImagesListViewPresenterProtocol?
     weak var delegate: ImagesListCellDelegate?
     private let gradientRectangleImage = UIImage(named: "Rectangle")
     private let today = Date()
@@ -42,7 +39,7 @@ final class ImagesListCell: UITableViewCell {
         delegate?.imageListCellDidTapLike(self)
     }
     
-    // MARK: - Methods
+    // MARK: - Public methods
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -69,13 +66,4 @@ final class ImagesListCell: UITableViewCell {
     func setIsLiked(isLiked: Bool) {
         likeButton.setImage(UIImage(resource: isLiked == true ? .active: .noActive), for: .normal)
     }
-    
-    
-    
-    
-
-    
-   
-    
-    
 }

@@ -15,7 +15,7 @@ public protocol ProfilePresenterProtocol: AnyObject {
     
     var view: ProfileViewControllerProtocol? { get set }
     
-    //MARK: - Methods
+    //MARK: - Public methods
     
     func loadProfileView()
     func configLogoutAlert(_ isYes: Bool)
