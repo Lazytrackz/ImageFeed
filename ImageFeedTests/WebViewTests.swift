@@ -12,76 +12,106 @@ import XCTest
 
 final class WebViewTests: XCTestCase {
     
-    final class WebViewPresenterSpy: WebViewPresenterProtocol {
-        var viewDidLoadCalled: Bool = false
-        var view: WebViewViewControllerProtocol?
-        
-        func viewDidLoad() {
-            viewDidLoadCalled = true
-        }
-        
-        func didUpdateProgressValue(_ newValue: Double) {}
-        
-        func code(from url: URL) -> String? {
-            return nil
-        }
-    }
-    
-    final class WebViewControllerSpy: WebViewViewControllerProtocol {
-        var presenter: WebViewPresenterProtocol?
-        var requestDidLoadCalled: Bool = false
-    
-        func load(request: URLRequest) {
-            requestDidLoadCalled = true
-        }
-        
-        func setProgressValue(_ newValue: Float) {}
-        func setProgressHidden(_ isHidden: Bool) {}
-    }
-
-    func testViewControllerCallsViewDidLoad() {
+    private func makeSUT() -> (
+        viewController: WebViewViewController,
+        presenter: WebViewPresenterSpy
+    ) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let viewController = storyboard.instantiateViewController(withIdentifier: "WebViewViewController") as! WebViewViewController
+        let viewController = storyboard.instantiateViewController(
+            withIdentifier: "WebViewViewController"
+        ) as! WebViewViewController
+
         let presenter = WebViewPresenterSpy()
         viewController.presenter = presenter
+
+        return (viewController, presenter)
+    }
+    
+    
+    func testViewControllerCallsViewDidLoad() {
+        // Given
+        
+        let (viewController, presenter) = makeSUT()
+        
+        // When
+        
         _ = viewController.view
-        XCTAssertTrue(presenter.viewDidLoadCalled) //behaviour verification
+        
+        // Then
+        
+        XCTAssertTrue(presenter.viewDidLoadCalled)
     }
     
     func testPresenterCallsLoadRequest() {
+        
+        // Given
+        
         let viewController = WebViewControllerSpy()
         let authHelper = AuthHelper()
         let presenter = WebViewPresenter(authHelper: authHelper)
         viewController.presenter = presenter
         presenter.view = viewController
+        
+        // When
+        
         presenter.viewDidLoad()
+        
+        // Then
+        
         XCTAssertTrue(viewController.requestDidLoadCalled)
     }
     
     func testProgressVisibleWhenLessThenOne() {
+        
+        // Given
+        
         let authHelper = AuthHelper()
         let presenter = WebViewPresenter(authHelper: authHelper)
         let progress: Float = 0.6
+        
+        // When
+        
         let shouldHideProgress = presenter.shouldHideProgress(for: progress)
+        
+        // Then
+        
         XCTAssertFalse(shouldHideProgress)
     }
     
     func testProgressHiddenWhenOne() {
+        
+        // Given
+        
         let authHelper = AuthHelper()
         let presenter = WebViewPresenter(authHelper: authHelper)
         let progress: Float = 1.0
+        
+        // When
+        
         let shouldHideProgress = presenter.shouldHideProgress(for: progress)
+        
+        // Then
+        
         XCTAssertTrue(shouldHideProgress)
     }
     
     func testAuthHelperAuthURL() {
+        
+        // Given
+        
         let configuration = AuthConfiguration.standard
         let authHelper = AuthHelper(configuration: configuration)
+        
+        // When
+        
         let url = authHelper.authURL()
         guard let urlString = url?.absoluteString else {
             XCTFail("Auth URL is nil")
             return
         }
+        
+        // Then
+        
         XCTAssertTrue(urlString.contains(configuration.authURLString))
         XCTAssertTrue(urlString.contains(configuration.accessKey))
         XCTAssertTrue(urlString.contains(configuration.redirectURI))
@@ -90,6 +120,9 @@ final class WebViewTests: XCTestCase {
     }
     
     func testCodeFromURL() {
+        
+        // Given
+        
         let configuration = AuthConfiguration.standard
         let authHelper = AuthHelper(configuration: configuration)
         var urlComp = URLComponents(string: URLQueryItemConstants.urlComponentsPath)
@@ -97,7 +130,13 @@ final class WebViewTests: XCTestCase {
             URLQueryItem(name: URLQueryItemConstants.code, value: "test code")
         ]
         let link = urlComp?.url
+        
+        // When
+        
         let code = authHelper.code(from: link!)
+        
+        // Then
+        
         XCTAssertEqual(code, "test code")
     }
 }

@@ -12,84 +12,102 @@ import XCTest
 
 final class ImagesListViewTests: XCTestCase {
     
-    final class ImagesListViewPresenterSpy: ImagesListViewPresenterProtocol {
-        var view: ImagesListViewControllerProtocol?
-        var viewDidLoad = false
-        var nextPhotoIsFetched = false
-        
-        func imagesListViewDidLoad() {
-            viewDidLoad = true
-        }
-        
-        func updateLike(photoId: String, isLike: Bool) {}
-        
-        func fetchPhotosNextPage() {
-            nextPhotoIsFetched = true
-        }
-        
-        func configTableViewAnimated(photos: [Photo]) {}
-    }
     
-    final class ImagesListViewControllerSpy: ImagesListViewControllerProtocol {
-        var presenter: (any ImageFeed.ImagesListViewPresenterProtocol)?
-        var photosIsUpdated = false
-        var isUpdatedTableViewAnimated = false
-        var tableViewIsConfigured = false
-        
-        func tableViewConfig() {
-            tableViewIsConfigured = true
-        }
-        
-        func updatePhotoList(photos: [Photo]) {
-            photosIsUpdated = true
-        }
-        
-        func updateTableViewAnimated(oldIndex: Int, newIndex: Int) {
-            isUpdatedTableViewAnimated = true
-        }
-    }
-    
-    func testViewControllerViewDidLoad() {
+    private func makeSUT() -> (
+        viewController: ImagesListViewController,
+        presenter: ImagesListViewPresenterSpy
+    ) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let viewController = storyboard.instantiateViewController(withIdentifier: "ImagesListViewController") as! ImagesListViewController
+        let viewController = storyboard.instantiateViewController(
+            withIdentifier: "ImagesListViewController"
+        ) as! ImagesListViewController
+
         let presenter = ImagesListViewPresenterSpy()
         viewController.presenter = presenter
+
+        return (viewController, presenter)
+    }
+        
+    func testViewControllerViewDidLoad() {
+        
+        // Given
+        
+        let (viewController, presenter) = makeSUT()
+        
+        // When
+        
         _ = viewController.view
+        
+        // Then
+        
         XCTAssertTrue(presenter.viewDidLoad)
     }
     
     func testViewControllerUpdatedPhotos() {
+        
+        // Given
+        
         let presenter = ImagesListViewPresenter()
         let view = ImagesListViewControllerSpy()
         presenter.view = view
         let photos: [Photo] = []
+        
+        // When
+        
         presenter.configTableViewAnimated(photos: photos)
+        
+        // Then
+        
         XCTAssertTrue(view.photosIsUpdated)
     }
     
     func testViewControllerUpdatedViewAnimated() {
+        
+        // Given
+        
         let presenter = ImagesListViewPresenter()
         let view = ImagesListViewControllerSpy()
         presenter.view = view
         let photos: [Photo] = []
+        
+        // When
+        
         presenter.configTableViewAnimated(photos: photos)
+        
+        // Then
+        
         XCTAssertTrue(view.isUpdatedTableViewAnimated)
     }
     
     func testPresenterFetchNextPhoto() {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let viewController = storyboard.instantiateViewController(withIdentifier: "ImagesListViewController") as! ImagesListViewController
-        let presenter = ImagesListViewPresenterSpy()
-        viewController.presenter = presenter
+        
+        // Given
+        
+        let (viewController, presenter) = makeSUT()
+        
+        // When
+        
         _ = viewController.view
+        
+        // Then
+        
         XCTAssertTrue(presenter.nextPhotoIsFetched)
     }
     
     func testViewControllerTableViewConfigured() {
+        
+        // Given
+        
         let presenter = ImagesListViewPresenter()
         let view = ImagesListViewControllerSpy()
         presenter.view = view
+        
+        // When
+        
         presenter.imagesListViewDidLoad()
+        
+        // Then
+        
         XCTAssertTrue(view.tableViewIsConfigured)
     }
 }

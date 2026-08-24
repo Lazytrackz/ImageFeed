@@ -19,11 +19,12 @@ final class ImagesListViewController: UIViewController, ImagesListViewController
     
     // MARK: - Properties
     
-    private let logger = Logger(label: "ImageFeed.ImagesListViewController.")
     var photos: [Photo] = []
+    var presenter: ImagesListViewPresenterProtocol?
+    
+    private let logger = Logger(label: "ImageFeed.ImagesListViewController.")
     private var isLoading: Bool = false
     private var ImagesListServiceObserver: NSObjectProtocol?
-    var presenter: ImagesListViewPresenterProtocol?
     
     // MARK: - Lifecycle
     
