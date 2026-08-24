@@ -7,6 +7,11 @@
 
 import Foundation
 
+//MARK: - ImagesListCellDelegate
+
 protocol ImagesListCellDelegate: AnyObject {
+    
+    //MARK: - Public methods
+    
     func imageListCellDidTapLike(_ cell: ImagesListCell)
 }

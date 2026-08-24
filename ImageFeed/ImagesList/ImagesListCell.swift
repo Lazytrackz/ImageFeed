@@ -21,6 +21,7 @@ final class ImagesListCell: UITableViewCell {
     
     // MARK: - Properties
     
+    var presenter: ImagesListViewPresenterProtocol?
     weak var delegate: ImagesListCellDelegate?
     private let gradientRectangleImage = UIImage(named: "Rectangle")
     private let today = Date()
@@ -38,7 +39,7 @@ final class ImagesListCell: UITableViewCell {
         delegate?.imageListCellDidTapLike(self)
     }
     
-    // MARK: - Methods
+    // MARK: - Public methods
     
     override func prepareForReuse() {
         super.prepareForReuse()

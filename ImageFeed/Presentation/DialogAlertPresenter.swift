@@ -12,7 +12,7 @@ import UIKit
 
 final class DialogAlertPresenter {
     
-    // MARK: - Methods
+    // MARK: - Public methods
     
     func show(alertModel: DialogAlertModel, controller: UIViewController, isYes: Bool, accessibilityId: String) {
         let alert = UIAlertController(

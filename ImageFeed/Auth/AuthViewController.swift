@@ -12,13 +12,13 @@ import SwiftKeychainWrapper
 
 final class AuthViewController: UIViewController {
     
-    // MARK: - private properties
+    // MARK: - Private properties
     
     private var webView: WebViewViewController = WebViewViewController()
     private var alertPresenter: AlertPresenter = AlertPresenter()
     private var splashView: SplashViewController?
     
-    // MARK: - properties
+    // MARK: - Properties
     
     weak var delegate: AuthViewControllerDelegate?
     
@@ -29,7 +29,29 @@ final class AuthViewController: UIViewController {
         configureBackButton()
     }
     
-    // MARK: - private methods
+    // MARK: - Override methods
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard segue.identifier == Identifier.segueWebViewIdentifier else {
+            super.prepare(for: segue, sender: sender)
+            return
+        }
+        
+        guard let webViewViewController = segue.destination as? WebViewViewController
+        else {
+            super.prepare(for: segue, sender: sender)
+            assertionFailure("Failed to prepare for \(Identifier.segueWebViewIdentifier)")
+            return
+        }
+        
+        let authHelper = AuthHelper()
+        let webViewPresenter = WebViewPresenter(authHelper: authHelper)
+        webViewViewController.presenter = webViewPresenter
+        webViewPresenter.view = webViewViewController
+        webViewViewController.delegate = self
+    }
+    
+    // MARK: - Private methods
     
     private func configureBackButton() {
         navigationController?.navigationBar.backIndicatorImage = UIImage(named: "nav_back_button")
@@ -37,29 +59,13 @@ final class AuthViewController: UIViewController {
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         navigationItem.backBarButtonItem?.tintColor = UIColor(named: "YP Black (iOS)")
     }
-    
-    // MARK: - override methods
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == Identifier.webViewIdentifier  {
-            guard
-                let webViewViewController = segue.destination as? WebViewViewController
-            else {
-                assertionFailure("Failed to prepare for \(Identifier.webViewIdentifier)")
-                return
-            }
-            webViewViewController.delegate = self
-        } else {
-            super.prepare(for: segue, sender: sender)
-        }
-    }
 }
 
-// MARK: - extension
+// MARK: - Extension
 
 extension AuthViewController: WebViewViewControllerDelegate {
     
-    // MARK: - methods
+    // MARK: - Public Methods
     
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
         vc.dismiss(animated: true)
@@ -79,6 +85,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
             }
         }
     }
+    
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
         vc.dismiss(animated: true)
     }
@@ -87,7 +94,6 @@ extension AuthViewController: WebViewViewControllerDelegate {
         let alertModel = AlertModel(title: AlertsConstants.authErrorHeader,
                                     message: AlertsConstants.authErrorMessage,
                                     buttonText: AlertsConstants.authErrorButtonText){ [weak self] in guard let self = self else { return }
-            
             webViewViewControllerDidCancel(webView)
             splashView?.checkToken()
         }

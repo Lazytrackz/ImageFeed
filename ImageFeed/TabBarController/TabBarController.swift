@@ -12,7 +12,7 @@ import UIKit
 
 final class TabBarController: UITabBarController {
     
-    // MARK: - methods
+    // MARK: - Override methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,6 +23,8 @@ final class TabBarController: UITabBarController {
         super.awakeFromNib()
         configureViewControllers()
     }
+    
+    // MARK: - Private methods
     
     private func configureTabBarAppearance() {
         let appearance = UITabBarAppearance()
@@ -39,8 +41,16 @@ final class TabBarController: UITabBarController {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
         let imagesListViewController = storyboard.instantiateViewController(
             withIdentifier: Identifier.imageListViewControllerIdentifier
-        )
+        ) as! ImagesListViewController
+        
         let profileViewController = ProfileViewController()
+        let profilePresenter = ProfilePresenter()
+        profilePresenter.view = profileViewController
+        profileViewController.presenter = profilePresenter
+        let imagesListPresenter = ImagesListViewPresenter()
+        imagesListPresenter.view = imagesListViewController
+        imagesListViewController.presenter = imagesListPresenter
+        
         profileViewController.tabBarItem = UITabBarItem(
             title: "",
             image: UIImage(named: "tab_profile_active"),

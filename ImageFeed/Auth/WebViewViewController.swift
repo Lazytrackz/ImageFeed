@@ -10,67 +10,64 @@ import UIKit
 
 // MARK: - WebViewViewController
 
-final class WebViewViewController: UIViewController {
+final class WebViewViewController: UIViewController, WebViewViewControllerProtocol {
     
     // MARK: - IBOutlets
     
     @IBOutlet weak var progressView: UIProgressView!
     @IBOutlet weak var webView: WKWebView!
     
-    // MARK: - properties
+    // MARK: - Properties
     
     weak var delegate: WebViewViewControllerDelegate?
     private var alertPresenter: AlertPresenter = AlertPresenter()
     private var estimatedProgressObservation: NSKeyValueObservation?
     private var splashView: SplashViewController?
+    var presenter: WebViewPresenterProtocol?
     
-    
-    // MARK: - lifecircle
+    // MARK: - Lifecircle
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        webView.accessibilityIdentifier = Identifier.webViewIdentifier
         webView.navigationDelegate = self
-        loadAuthView()
+        presenter?.viewDidLoad()
+        observeProgressView()
+    }
+    
+    // MARK: - Public methods
+    
+    func setProgressValue(_ newValue: Float) {
+        progressView.progress = newValue
+    }
+    
+    func setProgressHidden(_ isHidden: Bool) {
+        progressView.isHidden = isHidden
+    }
+    
+    func load(request: URLRequest) {
+        webView.load(request)
+    }
+    
+    // MARK: - Private methods
+    
+    private func observeProgressView() {
         estimatedProgressObservation = webView.observe(
             \.estimatedProgress,
              options: [],
              changeHandler: { [weak self] _, _ in
                  guard let self = self else { return }
-                 self.updateProgress()
+                 presenter?.didUpdateProgressValue(webView.estimatedProgress)
              })
-        updateProgress()
-    }
-    
-    // MARK: - private methods
-    
-    private func updateProgress() {
-        progressView.progress = Float(webView.estimatedProgress)
-        progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001
-    }
-    
-    private func loadAuthView() {
-        guard var urlComponents = URLComponents(string: UrlConstants.unsplashAuthorizeURLString) else {
-            return
-        }
-        urlComponents.queryItems = [
-            URLQueryItem(name: URLQueryItemConstants.clientId, value: UrlConstants.accessKey),
-            URLQueryItem(name: URLQueryItemConstants.redirectUri, value: UrlConstants.redirectURI),
-            URLQueryItem(name: URLQueryItemConstants.responseType, value: URLQueryItemConstants.code),
-            URLQueryItem(name: URLQueryItemConstants.scope, value: UrlConstants.accessScope)
-        ]
-        guard let url = urlComponents.url else {
-            print("Invalid url")
-            return
-        }
-        let request = URLRequest(url: url)
-        webView.load(request)
-        updateProgress()
     }
 }
 
-// MARK: - extension
+// MARK: - Extension
 
 extension WebViewViewController: WKNavigationDelegate {
+    
+    // MARK: - Public methods
+    
     func webView(
         _ webView: WKWebView,
         decidePolicyFor navigationAction: WKNavigationAction,
@@ -84,20 +81,12 @@ extension WebViewViewController: WKNavigationDelegate {
         }
     }
     
-    // MARK: - private methods
+    // MARK: - Private methods
     
     private func code(from navigationAction: WKNavigationAction) -> String? {
-        if
-            let url = navigationAction.request.url,
-            let urlComponents = URLComponents(string: url.absoluteString),
-            urlComponents.path == URLQueryItemConstants.urlComponentsPath,
-            let items = urlComponents.queryItems,
-            let codeItem = items.first(where: { $0.name == URLQueryItemConstants.code })
-        {
-            return codeItem.value
-            
-        } else {
-            return nil
+        if let url = navigationAction.request.url {
+            return presenter?.code(from: url)
         }
+        return nil
     }
 }

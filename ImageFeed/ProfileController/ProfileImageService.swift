@@ -11,32 +11,16 @@ import Foundation
 
 final class ProfileImageService {
     
-    //MARK: - private properties
+    //MARK: - Properties
     
+    static let shared = ProfileImageService()
+    static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
     private(set) var avatarURL: String?
     private var task: URLSessionTask?
     private init() {}
     
-    //MARK: - properties
     
-    static let shared = ProfileImageService()
-    static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
-    
-    
-    //MARK: - private methods
-    
-    private func makeProfileImageRequest(token: String, username: String) -> URLRequest? {
-        guard let url = URL(string: UrlConstants.profileImageRequest + (username)) else {
-            print("Unable to make request")
-            return nil
-        }
-        var request = URLRequest(url: url)
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        request.httpMethod = "GET"
-        return request
-    }
-    
-    //MARK: - methods
+    //MARK: - Public methods
     
     func fetchProfileImageURL(username: String, _ completion: @escaping (Result<String, Error>) -> Void) {
         task?.cancel()
@@ -44,7 +28,6 @@ final class ProfileImageService {
             print("Token not found")
             return
         }
-        print(token)
         guard let request = makeProfileImageRequest(token: token, username: username) else {
             completion(.failure(ProfileServiceError.invalidRequest))
             return
@@ -55,7 +38,6 @@ final class ProfileImageService {
                 self.avatarURL = data.profileImage.small
                 completion(.success(data.profileImage.small))
                 print(data.profileImage.small)
-                
                 NotificationCenter.default
                     .post(
                         name: ProfileImageService.didChangeNotification,
@@ -75,4 +57,16 @@ final class ProfileImageService {
         avatarURL = nil
     }
     
+    //MARK: - Private methods
+    
+    private func makeProfileImageRequest(token: String, username: String) -> URLRequest? {
+        guard let url = URL(string: UrlConstants.profileImageRequest + (username)) else {
+            print("Unable to make request")
+            return nil
+        }
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.httpMethod = "GET"
+        return request
+    }
 }

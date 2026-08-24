@@ -12,10 +12,9 @@ import UIKit
 final class SplashViewController: UIViewController {
     
     
-    // MARK: - Private properties
+    // MARK: - Properties
     
     private let storage = OAuth2TokenStorage()
-    
     
     // MARK: - Lifecycle
     
@@ -27,6 +26,17 @@ final class SplashViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         checkToken()
+    }
+    
+    // MARK: - Public methods
+    
+    func checkToken() {
+        if storage.token != nil{
+            guard let token = OAuth2TokenStorage().token else { return }
+            fetchProfile(token)
+        } else {
+            showAuthWindow()
+        }
     }
     
     // MARK: - Private methods
@@ -78,24 +88,13 @@ final class SplashViewController: UIViewController {
         splashScreenImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 0).isActive = true
         splashScreenImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 0).isActive = true
     }
-    
-    // MARK: - methods
-    
-    func checkToken() {
-        if storage.token != nil{
-            guard let token = OAuth2TokenStorage().token else { return }
-            fetchProfile(token)
-        } else {
-            showAuthWindow()
-        }
-    }
 }
 
 // MARK: - Extension
 
 extension SplashViewController: AuthViewControllerDelegate {
     
-    // MARK: - methods
+    // MARK: - Public methods
     
     func didAuthenticate(_ vc: AuthViewController) {
         vc.dismiss(animated: true)

@@ -10,7 +10,8 @@ import Foundation
 //MARK: - Identifier
 
 enum Identifier {
-    static let webViewIdentifier = "ShowWebView"
+    static let webViewIdentifier = "WebView"
+    static let segueWebViewIdentifier = "ShowWebView"
     static let AuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
     static let imageListViewControllerIdentifier = "ImagesListViewController"
     static let authViewControllerIdentifier = "AuthViewController"

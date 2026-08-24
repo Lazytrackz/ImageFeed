@@ -18,6 +18,14 @@ final class ProfileLogoutService {
     static let shared = ProfileLogoutService()
     private init() { }
     
+    //MARK: - Public methods
+    
+    func logout() {
+        cleanCookies()
+        clearToken()
+        clearProfile()
+    }
+    
     //MARK: - Private Methods
     
     private func cleanCookies() {
@@ -31,7 +39,6 @@ final class ProfileLogoutService {
     
     private func clearToken() {
         KeychainWrapper.standard.removeObject(forKey: Identifier.accessToken)
-        
     }
     
     private func clearProfile() {
@@ -40,11 +47,4 @@ final class ProfileLogoutService {
         ImagesListService.shared.clearPhotos()
     }
     
-    //MARK: - Methods
-    
-    func logout() {
-        cleanCookies()
-        clearToken()
-        clearProfile()
-    }
 }
